@@ -8,6 +8,7 @@ import com.example.firebaserestapi.data.User;
 import com.example.firebaserestapi.network.FirebaseAPI;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Interceptor;
@@ -34,23 +35,8 @@ public class UserRepository {
     //get user from firebase
     public MutableLiveData<List<User>> getUserDetailsListMutableLiveData() {
         Log.i("TAG", "getUserDetailsListMutableLiveData: ");
- /*     List<User> userList = new ArrayList<>();
-        User user = new User();
-        user.setName("Hamid");
-        user.setEmail("an@gmail.com");
-        user.setPhone("888888333");
-        userList.add(user);
-        User user1 = new User();
-        user1.setName("Hamid1");
-        user1.setEmail("an@gmail.com1");
-        user1.setPhone("8888883331");
-        userList.add(user1);
-        new Handler().postDelayed(() -> {
-            userListMutableLiveData.postValue(userList);
-        }, 3000);
-*/
+        postUserList();
         fetchFirebaseUserList();
-
         return userListMutableLiveData;
     }
 
@@ -99,6 +85,74 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
+                Log.d("Response ", "onFailure");
+                //t1.setText("Notification failure");
+            }
+        });
+    }
+
+
+    public void postUserList() {
+        List<User> userList = new ArrayList<>();
+        User user = new User();
+        user.setName("Hamid");
+        user.setEmail("an@gmail.com");
+        user.setPhone("888888333");
+        userList.add(user);
+        User user1 = new User();
+        user1.setName("Hamid1");
+        user1.setEmail("an@gmail.com1");
+        user1.setPhone("8888883331");
+        userList.add(user1);
+
+        postFirebaseUserList(user);
+    }
+
+
+    private void postFirebaseUserList(User user) {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                // Request customization: add request headers
+                Request.Builder requestBuilder = original.newBuilder();
+                //   .header("Authorization", authtoken); // <-- in test mode
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
+            }
+        });
+
+        httpClient.addInterceptor(logging);
+        OkHttpClient client = httpClient.build();
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://fir-restapi-11c09-default-rtdb.firebaseio.com")//url of firebase database app
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())//use for convert JSON file into object
+                .build();
+
+        // prepare call in Retrofit 2.0
+        FirebaseAPI firebaseAPI = retrofit.create(FirebaseAPI.class);
+
+        Call<Void> call2 = firebaseAPI.postUserListData(user);
+
+        call2.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                Log.d("Response ", "onResponse");
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
                 Log.d("Response ", "onFailure");
                 //t1.setText("Notification failure");
             }
