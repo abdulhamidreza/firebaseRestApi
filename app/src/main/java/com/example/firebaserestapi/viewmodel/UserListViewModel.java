@@ -3,13 +3,14 @@ package com.example.firebaserestapi.viewmodel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.firebaserestapi.data.User;
 import com.example.firebaserestapi.repository.UserRepository;
+import com.google.gson.JsonElement;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class UserListViewModel extends ViewModel {
-    MutableLiveData<List<User>> userListMutableLiveData;
+    MutableLiveData<Set<Map.Entry<String, JsonElement>>> userListMutableLiveData;
     UserRepository userRepository;
 
     public UserListViewModel() {
@@ -17,7 +18,7 @@ public class UserListViewModel extends ViewModel {
         userListMutableLiveData = userRepository.getUserDetailsListMutableLiveData();
     }
 
-    public MutableLiveData<List<User>> getLiveUserData() {
+    public MutableLiveData<Set<Map.Entry<String, JsonElement>>> getLiveUserData() {
         return userListMutableLiveData;
     }
 }

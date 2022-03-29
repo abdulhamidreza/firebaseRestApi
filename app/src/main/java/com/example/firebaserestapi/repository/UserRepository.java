@@ -6,10 +6,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.firebaserestapi.data.User;
 import com.example.firebaserestapi.network.FirebaseAPI;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -22,18 +26,16 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserRepository {
-    MutableLiveData<List<User>> userListMutableLiveData;
-    MutableLiveData<User> userMutableLiveData;
+    MutableLiveData<Set<Map.Entry<String, JsonElement>>> userListMutableLiveData;
 
     public UserRepository() {
         this.userListMutableLiveData = new MutableLiveData<>();
-        //define userlist
-        userMutableLiveData = new MutableLiveData<>();
+
 
     }
 
     //get user from firebase
-    public MutableLiveData<List<User>> getUserDetailsListMutableLiveData() {
+    public MutableLiveData<Set<Map.Entry<String, JsonElement>>> getUserDetailsListMutableLiveData() {
         Log.i("TAG", "getUserDetailsListMutableLiveData: ");
         postUserList();
         fetchFirebaseUserList();
@@ -71,22 +73,24 @@ public class UserRepository {
         // prepare call in Retrofit 2.0
         FirebaseAPI firebaseAPI = retrofit.create(FirebaseAPI.class);
 
-        Call<List<User>> call2 = firebaseAPI.getUserListData();
+        Call<JsonObject> call2 = firebaseAPI.getUserListData();
 
-        call2.enqueue(new Callback<List<User>>() {
+        call2.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+
+                Set<Map.Entry<String, JsonElement>> s = response.body().entrySet();
 
                 Log.d("Response ", "onResponse");
-                userListMutableLiveData.postValue(response.body());
+                userListMutableLiveData.postValue(s);
 
 
             }
 
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 Log.d("Response ", "onFailure");
-                //t1.setText("Notification failure");
+                t.printStackTrace();
             }
         });
     }
