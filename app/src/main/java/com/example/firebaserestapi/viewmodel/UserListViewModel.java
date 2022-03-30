@@ -15,10 +15,10 @@ public class UserListViewModel extends ViewModel {
 
     public UserListViewModel() {
         userRepository = new UserRepository();
-        userListMutableLiveData = userRepository.getUserDetailsListMutableLiveData();
     }
 
     public MutableLiveData<Set<Map.Entry<String, JsonElement>>> getLiveUserData() {
+        userListMutableLiveData = userRepository.getUserDetailsListMutableLiveData();
         return userListMutableLiveData;
     }
 }

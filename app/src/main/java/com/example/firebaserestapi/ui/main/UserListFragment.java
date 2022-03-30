@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import com.example.firebaserestapi.R;
 import com.example.firebaserestapi.data.User;
 import com.example.firebaserestapi.data.UserAdapter;
 import com.example.firebaserestapi.viewmodel.UserListViewModel;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
@@ -46,12 +48,32 @@ public class UserListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
 
-        userRecycler = rootView.findViewById(R.id.container);
+        ExtendedFloatingActionButton fab = (ExtendedFloatingActionButton) rootView.findViewById(R.id.add_user_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoAddUserFragment();
+            }
+        });
+        userRecycler = rootView.findViewById(R.id.recycleView_container);
         userRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userRecycler.setHasFixedSize(true);
-        // TODO: Use the ViewModel
+        loadUserList();
+    }
+
+    private void gotoAddUserFragment() {
+        String backStateName = this.getClass().getName();
+
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(backStateName)
+                .replace(R.id.container, AddUserFragment.newInstance())
+                .commit();
+    }
+
+    private void loadUserList() {
+        mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
         mViewModel.getLiveUserData().observe(this.requireActivity(), userListSet -> {
             List<User> users = new ArrayList<>();
             Gson gson = new Gson();
@@ -63,13 +85,9 @@ public class UserListFragment extends Fragment {
                     Log.e("Gson formatting Error with Key: " + userList.getKey() + "  Value: " + userList.getValue(), "", e);
                 }
             }
-
             userAdapter = new UserAdapter(users);
             userRecycler.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
-
-
         });
     }
-
 }

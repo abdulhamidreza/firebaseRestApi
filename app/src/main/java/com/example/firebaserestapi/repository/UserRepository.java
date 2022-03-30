@@ -10,8 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,17 +25,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserRepository {
     MutableLiveData<Set<Map.Entry<String, JsonElement>>> userListMutableLiveData;
+    MutableLiveData<Boolean> saveUserMutableLiveData;
 
     public UserRepository() {
         this.userListMutableLiveData = new MutableLiveData<>();
-
-
+        this.saveUserMutableLiveData = new MutableLiveData<>();
     }
 
     //get user from firebase
     public MutableLiveData<Set<Map.Entry<String, JsonElement>>> getUserDetailsListMutableLiveData() {
         Log.i("TAG", "getUserDetailsListMutableLiveData: ");
-        postUserList();
         fetchFirebaseUserList();
         return userListMutableLiveData;
     }
@@ -96,24 +93,15 @@ public class UserRepository {
     }
 
 
-    public void postUserList() {
-        List<User> userList = new ArrayList<>();
-        User user = new User();
-        user.setName("Hamid");
-        user.setEmail("an@gmail.com");
-        user.setPhone("888888333");
-        userList.add(user);
-        User user1 = new User();
-        user1.setName("Hamid1");
-        user1.setEmail("an@gmail.com1");
-        user1.setPhone("8888883331");
-        userList.add(user1);
-
-        postFirebaseUserList(user);
+    //get user from firebase
+    public MutableLiveData<Boolean> saveUserDetailsMutableLiveData(User user) {
+        Log.i("TAG", "saveUserDetailsMutableLiveData: ");
+        saveFirebaseUser(user);
+        return saveUserMutableLiveData;
     }
 
 
-    private void postFirebaseUserList(User user) {
+    private void saveFirebaseUser(User user) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -149,16 +137,14 @@ public class UserRepository {
         call2.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-
+                saveUserMutableLiveData.postValue(true);
                 Log.d("Response ", "onResponse");
-
-
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.d("Response ", "onFailure");
-                //t1.setText("Notification failure");
+                saveUserMutableLiveData.postValue(false);
             }
         });
     }
