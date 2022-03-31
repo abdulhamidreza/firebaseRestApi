@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,6 +29,7 @@ public class AddUserFragment extends Fragment {
     private TextInputEditText userEmailETxt;
     private TextInputEditText userPhoneETxt;
     private AppCompatButton saveUserBtn;
+    ContentLoadingProgressBar contentLoadingProgressBar;
 
 
     public static AddUserFragment newInstance() {
@@ -49,27 +51,30 @@ public class AddUserFragment extends Fragment {
         userEmailETxt = rootView.findViewById(R.id.editTextEmail);
         userPhoneETxt = rootView.findViewById(R.id.editTextPhone);
         saveUserBtn = rootView.findViewById(R.id.buttonSave);
+        contentLoadingProgressBar =
+                (ContentLoadingProgressBar) rootView.findViewById(R.id.saveProgressBar);
+
+        mViewModel = new ViewModelProvider(this).get(SaveUserViewModel.class);
 
         saveUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadUserList();
+                contentLoadingProgressBar.show();
+                saveUserDetails();
             }
         });
 
     }
 
-    private void loadUserList() {
-        mViewModel = new ViewModelProvider(this).get(SaveUserViewModel.class);
+    private void saveUserDetails() {
         User user = new User();
         user.setName(Objects.requireNonNull(userNameETxt.getText()).toString());
         user.setEmail(Objects.requireNonNull(userEmailETxt.getText()).toString());
         user.setPhone(Objects.requireNonNull(userPhoneETxt.getText()).toString());
 
         mViewModel.saveUserLiveData(user).observe(this.requireActivity(), isSaved -> {
-
-            Log.d("***********", isSaved+"");
-
+            Log.d("**************", isSaved + "");
+            contentLoadingProgressBar.hide();
         });
     }
 

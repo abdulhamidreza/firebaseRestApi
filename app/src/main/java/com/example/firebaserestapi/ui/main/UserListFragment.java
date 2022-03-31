@@ -49,6 +49,8 @@ public class UserListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
+
         ExtendedFloatingActionButton fab = (ExtendedFloatingActionButton) rootView.findViewById(R.id.add_user_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +75,6 @@ public class UserListFragment extends Fragment {
     }
 
     private void loadUserList() {
-        mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
         mViewModel.getLiveUserData().observe(this.requireActivity(), userListSet -> {
             List<User> users = new ArrayList<>();
             Gson gson = new Gson();
