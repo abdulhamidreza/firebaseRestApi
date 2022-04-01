@@ -32,6 +32,7 @@ public class UserListFragment extends Fragment {
     private RecyclerView userRecycler;
     private UserAdapter userAdapter;
     private View rootView;
+    private CustomAlertDialogs customAlertDialogs;
 
     public static UserListFragment newInstance() {
         return new UserListFragment();
@@ -50,6 +51,7 @@ public class UserListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
+        customAlertDialogs = CustomAlertDialogs.getInstance();
 
         ExtendedFloatingActionButton fab = (ExtendedFloatingActionButton) rootView.findViewById(R.id.add_user_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +84,7 @@ public class UserListFragment extends Fragment {
             ) {
                 try {
                     users.add(gson.fromJson(userList.getValue(), User.class));
+                    showData();
                 } catch (Exception e) {
                     Log.e("Gson formatting Error with Key: " + userList.getKey() + "  Value: " + userList.getValue(), "", e);
                 }
@@ -90,5 +93,9 @@ public class UserListFragment extends Fragment {
             userRecycler.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
         });
+    }
+
+    private void showData() {
+        customAlertDialogs.showAlert(requireContext(), "Hamid", "ddddd@ddd");
     }
 }

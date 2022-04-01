@@ -56,6 +56,13 @@ public class AddUserFragment extends Fragment {
 
         mViewModel = new ViewModelProvider(this).get(SaveUserViewModel.class);
 
+        mViewModel.getUserLiveData().observe(this.requireActivity(), isSaved -> {
+            Log.d("**************", isSaved + "");
+            contentLoadingProgressBar.hide();
+            requireActivity().onBackPressed();
+        });
+
+
         saveUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,11 +78,7 @@ public class AddUserFragment extends Fragment {
         user.setName(Objects.requireNonNull(userNameETxt.getText()).toString());
         user.setEmail(Objects.requireNonNull(userEmailETxt.getText()).toString());
         user.setPhone(Objects.requireNonNull(userPhoneETxt.getText()).toString());
-
-        mViewModel.saveUserLiveData(user).observe(this.requireActivity(), isSaved -> {
-            Log.d("**************", isSaved + "");
-            contentLoadingProgressBar.hide();
-        });
+        mViewModel.saveUserLiveData(user);
     }
 
 

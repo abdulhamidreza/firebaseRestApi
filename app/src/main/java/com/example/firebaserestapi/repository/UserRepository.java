@@ -30,7 +30,6 @@ public class UserRepository {
 
     public UserRepository() {
         this.userListMutableLiveData = new MutableLiveData<>();
-        this.saveUserMutableLiveData = new MutableLiveData<>();
     }
 
     //get user from firebase
@@ -95,10 +94,10 @@ public class UserRepository {
 
 
     //get user from firebase
-    public LiveData<Boolean> saveUserDetailsMutableLiveData(User user) {
+    public void saveUserDetailsMutableLiveData(User user, MutableLiveData<Boolean> saveUserMutableLiveData) {
         Log.i("TAG", "saveUserDetailsMutableLiveData: ");
+        this.saveUserMutableLiveData = saveUserMutableLiveData;
         saveFirebaseUser(user);
-        return saveUserMutableLiveData;
     }
 
 
