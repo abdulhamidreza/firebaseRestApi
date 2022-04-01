@@ -14,7 +14,10 @@ import com.example.firebaserestapi.R;
 public class CustomAlertDialogs {
 
     private AlertDialog alertDialog;
-
+    private Button mAlertAbortButton;
+    private TextView mNameTxt;
+    private TextView mEmailTxt;
+    private TextView mPhoneTxt;
 
     private static CustomAlertDialogs customAlertDialogs = null;
 
@@ -45,30 +48,30 @@ public class CustomAlertDialogs {
         return ad;
     }
 
-    public void showAlert(Context context, String mMessage, String
-            mExtra) {
+    public void showAlert(Context context, String name, String
+            email, String phone) {
         if (context != null) {
             if (alertDialog == null) {
                 alertDialog = alert(context);
             }
-            displayLayout(alertDialog, R.layout.layout_alert_message, mMessage, mExtra);
+            alertDialog.setContentView(R.layout.layout_alert_message);
+            mAlertAbortButton = alertDialog.findViewById(R.id.button_go_to_home_screen);
+            mNameTxt = alertDialog.findViewById(R.id.textView_alert_message_name);
+            if (mNameTxt != null) mNameTxt.setText(name);
+            mEmailTxt = alertDialog.findViewById(R.id.textView_alert_message_email);
+            if (mEmailTxt != null) mEmailTxt.setText(email);
+            mPhoneTxt = alertDialog.findViewById(R.id.textView_alert_message_phone);
+            if (mPhoneTxt != null) mPhoneTxt.setText(phone);
+
+            if (mAlertAbortButton != null) {
+                mAlertAbortButton.requestFocus();
+                mAlertAbortButton.setOnClickListener(v -> {
+                    this.alertDialog.dismiss();
+                });
+            }
+            alertDialog.show();
 
         }
-    }
-
-    private void displayLayout(AlertDialog ad, int layoutId,
-                               String mMessage, String mExtra) {
-        ad.setContentView(layoutId);
-        Button mAlertAbortButton = ad.findViewById(R.id.button_go_to_home_screen);
-        TextView mAlertMessage = ad.findViewById(R.id.textView_alert_message);
-        if (mAlertMessage != null) mAlertMessage.setText(mMessage);
-        if (mAlertAbortButton != null) {
-            mAlertAbortButton.requestFocus();
-            mAlertAbortButton.setOnClickListener(v -> {
-                alertDialog.dismiss();
-            });
-        }
-        ad.show();
     }
 
 }

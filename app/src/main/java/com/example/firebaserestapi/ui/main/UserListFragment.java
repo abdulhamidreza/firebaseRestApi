@@ -26,13 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class UserListFragment extends Fragment {
+public class UserListFragment extends Fragment implements UserAdapter.OnUserItemClickedListener {
 
     private UserListViewModel mViewModel;
     private RecyclerView userRecycler;
     private UserAdapter userAdapter;
     private View rootView;
     private CustomAlertDialogs customAlertDialogs;
+    List<User> users = new ArrayList<>();
+    Gson gson = new Gson();
 
     public static UserListFragment newInstance() {
         return new UserListFragment();
@@ -78,24 +80,22 @@ public class UserListFragment extends Fragment {
 
     private void loadUserList() {
         mViewModel.getLiveUserData().observe(this.requireActivity(), userListSet -> {
-            List<User> users = new ArrayList<>();
-            Gson gson = new Gson();
-            for (Map.Entry<String, JsonElement> userList : userListSet
-            ) {
+            for (Map.Entry<String, JsonElement> userList : userListSet) {
                 try {
                     users.add(gson.fromJson(userList.getValue(), User.class));
-                    showData();
                 } catch (Exception e) {
                     Log.e("Gson formatting Error with Key: " + userList.getKey() + "  Value: " + userList.getValue(), "", e);
                 }
             }
-            userAdapter = new UserAdapter(users);
+            userAdapter = new UserAdapter(users, this);
             userRecycler.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
         });
     }
 
-    private void showData() {
-        customAlertDialogs.showAlert(requireContext(), "Hamid", "ddddd@ddd");
+    @Override
+    public void onUserItemClicked(int position) {
+        User userSelected = users.get(position);
+        customAlertDialogs.showAlert(requireContext(), userSelected.getName(), userSelected.getEmail(), userSelected.getPhone());
     }
 }

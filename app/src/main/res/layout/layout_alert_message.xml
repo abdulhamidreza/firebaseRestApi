@@ -10,12 +10,12 @@
     android:nextFocusForward="@id/button_go_to_home_screen">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
+        android:layout_margin="100dp"
         android:elevation="5dp"
-        android:padding="40dp"
+        android:padding="60dp"
         app:cardCornerRadius="5dp">
 
         <LinearLayout
@@ -27,7 +27,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView_alert_message"
+                android:id="@+id/textView_alert_message_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
