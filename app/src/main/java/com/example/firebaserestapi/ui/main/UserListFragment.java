@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,8 +34,9 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     private UserAdapter userAdapter;
     private View rootView;
     private CustomAlertDialogs customAlertDialogs;
-    List<User> users = new ArrayList<>();
-    Gson gson = new Gson();
+    private ContentLoadingProgressBar contentLoadingProgressBar;
+    private List<User> users = new ArrayList<>();
+    private Gson gson = new Gson();
 
     public static UserListFragment newInstance() {
         return new UserListFragment();
@@ -54,6 +56,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
 
         mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
         customAlertDialogs = CustomAlertDialogs.getInstance();
+        contentLoadingProgressBar = rootView.findViewById(R.id.loadProgressBar);
 
         ExtendedFloatingActionButton fab = (ExtendedFloatingActionButton) rootView.findViewById(R.id.add_user_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +82,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     }
 
     private void loadUserList() {
+        contentLoadingProgressBar.show();
         mViewModel.getLiveUserData().observe(this.requireActivity(), userListSet -> {
             for (Map.Entry<String, JsonElement> userList : userListSet) {
                 try {
@@ -90,6 +94,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
             userAdapter = new UserAdapter(users, this);
             userRecycler.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
+            contentLoadingProgressBar.hide();
         });
     }
 

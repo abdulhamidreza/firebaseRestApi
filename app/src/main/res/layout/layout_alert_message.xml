@@ -10,8 +10,8 @@
     android:nextFocusForward="@id/button_go_to_home_screen">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="100dp"
         android:elevation="5dp"
@@ -19,17 +19,19 @@
         app:cardCornerRadius="5dp">
 
         <LinearLayout
-            android:layout_width="201dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="29dp"
             android:layout_marginBottom="29dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginLeft="60dp"
             android:gravity="center"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textView_alert_message_name"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:gravity="center_horizontal"
                 android:lineSpacingExtra="3sp"
@@ -42,8 +44,8 @@
 
             <TextView
                 android:id="@+id/textView_alert_message_email"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:gravity="center_horizontal"
                 android:lineSpacingExtra="3sp"
@@ -55,8 +57,8 @@
 
             <TextView
                 android:id="@+id/textView_alert_message_phone"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:gravity="center_horizontal"
                 android:lineSpacingExtra="3sp"
@@ -70,7 +72,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_go_to_home_screen"
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:focusable="true"

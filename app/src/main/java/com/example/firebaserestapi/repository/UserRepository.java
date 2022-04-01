@@ -40,39 +40,10 @@ public class UserRepository {
     }
 
     private void fetchFirebaseUserList() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
+        Call<JsonObject> call = getRetrofitObject().getUserListData();
 
-                // Request customization: add request headers
-                Request.Builder requestBuilder = original.newBuilder();
-                //   .header("Authorization", authtoken); // <-- in test mode
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
-            }
-        });
-
-        httpClient.addInterceptor(logging);
-        OkHttpClient client = httpClient.build();
-
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://fir-restapi-11c09-default-rtdb.firebaseio.com")//url of firebase database app
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())//use for convert JSON file into object
-                .build();
-
-        // prepare call in Retrofit 2.0
-        FirebaseAPI firebaseAPI = retrofit.create(FirebaseAPI.class);
-
-        Call<JsonObject> call2 = firebaseAPI.getUserListData();
-
-        call2.enqueue(new Callback<JsonObject>() {
+        call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
@@ -80,8 +51,6 @@ public class UserRepository {
 
                 Log.d("Response ", "onResponse");
                 userListMutableLiveData.postValue(s);
-
-
             }
 
             @Override
@@ -102,6 +71,25 @@ public class UserRepository {
 
 
     private void saveFirebaseUser(User user) {
+
+        Call<Void> call2 = getRetrofitObject().postUserListData(user);
+
+        call2.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                saveUserMutableLiveData.postValue(true);
+                Log.d("Response ", "onResponse");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Response ", "onFailure");
+                saveUserMutableLiveData.postValue(false);
+            }
+        });
+    }
+
+    private FirebaseAPI getRetrofitObject() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -122,7 +110,6 @@ public class UserRepository {
         httpClient.addInterceptor(logging);
         OkHttpClient client = httpClient.build();
 
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://fir-restapi-11c09-default-rtdb.firebaseio.com")//url of firebase database app
                 .client(client)
@@ -130,23 +117,8 @@ public class UserRepository {
                 .build();
 
         // prepare call in Retrofit 2.0
-        FirebaseAPI firebaseAPI = retrofit.create(FirebaseAPI.class);
+        return retrofit.create(FirebaseAPI.class);
 
-        Call<Void> call2 = firebaseAPI.postUserListData(user);
-
-        call2.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                saveUserMutableLiveData.postValue(true);
-                Log.d("Response ", "onResponse");
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("Response ", "onFailure");
-                saveUserMutableLiveData.postValue(false);
-            }
-        });
     }
 
 

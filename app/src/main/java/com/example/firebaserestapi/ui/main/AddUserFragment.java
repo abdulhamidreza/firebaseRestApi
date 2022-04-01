@@ -29,7 +29,7 @@ public class AddUserFragment extends Fragment {
     private TextInputEditText userEmailETxt;
     private TextInputEditText userPhoneETxt;
     private AppCompatButton saveUserBtn;
-    ContentLoadingProgressBar contentLoadingProgressBar;
+    private ContentLoadingProgressBar contentLoadingProgressBar;
 
 
     public static AddUserFragment newInstance() {
