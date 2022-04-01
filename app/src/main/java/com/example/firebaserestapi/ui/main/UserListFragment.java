@@ -33,7 +33,6 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     private RecyclerView userRecycler;
     private UserAdapter userAdapter;
     private View rootView;
-    private CustomAlertDialogs customAlertDialogs;
     private ContentLoadingProgressBar contentLoadingProgressBar;
     private List<User> users = new ArrayList<>();
     private Gson gson = new Gson();
@@ -55,7 +54,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
-        customAlertDialogs = CustomAlertDialogs.getInstance();
+
         contentLoadingProgressBar = rootView.findViewById(R.id.loadProgressBar);
 
         ExtendedFloatingActionButton fab = (ExtendedFloatingActionButton) rootView.findViewById(R.id.add_user_fab);
@@ -69,16 +68,6 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
         userRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userRecycler.setHasFixedSize(true);
         loadUserList();
-    }
-
-    private void gotoAddUserFragment() {
-        String backStateName = this.getClass().getName();
-
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .addToBackStack(backStateName)
-                .replace(R.id.container, AddUserFragment.newInstance())
-                .commit();
     }
 
     private void loadUserList() {
@@ -98,9 +87,32 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
         });
     }
 
+    private void gotoAddUserFragment() {
+        String backStateName = this.getClass().getName();
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(backStateName)
+                .replace(R.id.container, AddUserFragment.newInstance())
+                .commit();
+    }
+
+
     @Override
     public void onUserItemClicked(int position) {
         User userSelected = users.get(position);
-        customAlertDialogs.showAlert(requireContext(), userSelected.getName(), userSelected.getEmail(), userSelected.getPhone());
+        String backStateName = this.getClass().getName();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("user", userSelected.getName());
+        bundle.putString("email", userSelected.getEmail());
+        bundle.putString("phone", userSelected.getPhone());
+        Fragment fragment = ShowUsersFragment.newInstance();
+        fragment.setArguments(bundle);
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(backStateName)
+                .replace(R.id.container, fragment)
+                .commit();
     }
+
 }
