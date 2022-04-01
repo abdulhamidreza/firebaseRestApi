@@ -45,8 +45,9 @@ public class AddUserFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         userNameETxt = rootView.findViewById(R.id.editTextName);
         userEmailETxt = rootView.findViewById(R.id.editTextEmail);
         userPhoneETxt = rootView.findViewById(R.id.editTextPhone);

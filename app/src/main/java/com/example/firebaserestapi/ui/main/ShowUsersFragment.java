@@ -33,8 +33,8 @@ public class ShowUsersFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         mNameTxt = rootView.findViewById(R.id.textView_alert_message_name);
         mEmailTxt = rootView.findViewById(R.id.textView_alert_message_email);
