@@ -2,7 +2,6 @@ package com.example.firebaserestapi.repository;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.firebaserestapi.data.User;
@@ -33,10 +32,11 @@ public class UserRepository {
     }
 
     //get user from firebase
-    public LiveData<Set<Map.Entry<String, JsonElement>>> getUserDetailsListMutableLiveData() {
+    public void getUserDetailsListMutableLiveData(MutableLiveData<Set<Map.Entry<String, JsonElement>>> userListMutableLiveData) {
         Log.i("TAG", "getUserDetailsListMutableLiveData: ");
+        this.userListMutableLiveData = userListMutableLiveData;
         fetchFirebaseUserList();
-        return userListMutableLiveData;
+
     }
 
     private void fetchFirebaseUserList() {

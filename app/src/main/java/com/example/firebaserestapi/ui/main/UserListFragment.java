@@ -41,6 +41,15 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
         return new UserListFragment();
     }
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
+        mViewModel.loadUserData();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -53,8 +62,6 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
 
         contentLoadingProgressBar = rootView.findViewById(R.id.loadProgressBar);
 
