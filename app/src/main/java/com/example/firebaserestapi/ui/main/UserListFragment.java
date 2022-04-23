@@ -18,18 +18,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.firebaserestapi.R;
 import com.example.firebaserestapi.data.User;
 import com.example.firebaserestapi.data.UserAdapter;
-import com.example.firebaserestapi.viewmodel.UserListViewModel;
+import com.example.firebaserestapi.network.RetrofitServiceKt;
+import com.example.firebaserestapi.repository.UserRepositoryKt;
+import com.example.firebaserestapi.viewmodel.MyViewModelFactory;
+import com.example.firebaserestapi.viewmodel.UserListViewModelKt;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class UserListFragment extends Fragment implements UserAdapter.OnUserItemClickedListener {
 
-    private UserListViewModel mViewModel;
+    private UserListViewModelKt mViewModel;
     private RecyclerView userRecycler;
     private UserAdapter userAdapter;
     private View rootView;
@@ -45,9 +46,9 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mViewModel = new ViewModelProvider(this).get(UserListViewModel.class);
-        mViewModel.loadUserData();
+        RetrofitServiceKt retrofitService = RetrofitServiceKt.Companion.getInstance();
+        UserRepositoryKt userRepositoryKt = new UserRepositoryKt(retrofitService);
+        mViewModel = new ViewModelProvider(this, new MyViewModelFactory(userRepositoryKt)).get(UserListViewModelKt.class);
     }
 
     @Nullable
@@ -79,20 +80,30 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     }
     
     private void loadUserList() {
-        contentLoadingProgressBar.show();
-        mViewModel.getLiveUserData().observe(this.requireActivity(), userListSet -> {
-            for (Map.Entry<String, JsonElement> userList : userListSet) {
-                try {
-                    users.add(gson.fromJson(userList.getValue(), User.class));
-                } catch (Exception e) {
-                    Log.e("Gson formatting Error with Key: " + userList.getKey() + "  Value: " + userList.getValue(), "", e);
-                }
-            }
-            userAdapter = new UserAdapter(users, this);
+        contentLoadingProgressBar.setVisibility(View.VISIBLE);
+
+        mViewModel.getUserKtList().observe(this.requireActivity(), userListSet -> {
+            userAdapter = new UserAdapter(userListSet, this);
             userRecycler.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
-            contentLoadingProgressBar.hide();
+            Log.e("********** loadUserList", userListSet.toString());
         });
+
+        mViewModel.getErrorMessage().observe(this.requireActivity(), it -> {
+            Log.e("********** getErrorMessage", it);
+        });
+
+        mViewModel.getLoadingStatus().observe(this.requireActivity(), it -> {
+            Log.e("********** getLoading", "is Loading " + it);
+            if (it) {
+                contentLoadingProgressBar.setVisibility(View.GONE);
+            } else {
+                contentLoadingProgressBar.setBackgroundColor(getResources().getColor(android.R.color.system_accent1_10));
+            }
+        });
+
+        mViewModel.getAllUsers();
+
     }
 
     private void gotoAddUserFragment() {

@@ -14,10 +14,10 @@ import com.example.firebaserestapi.R;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements AdapterView.OnItemClickListener {
-    List<User> mUserList;
+    List<UserKt> mUserList;
     private OnUserItemClickedListener mOnUserItemClickedListener;
 
-    public UserAdapter(List<User> mUserList, OnUserItemClickedListener onUserItemClickedListener) {
+    public UserAdapter(List<UserKt> mUserList, OnUserItemClickedListener onUserItemClickedListener) {
         this.mUserList = mUserList;
         this.mOnUserItemClickedListener = onUserItemClickedListener;
     }

@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.firebaserestapi.R;
 import com.example.firebaserestapi.data.User;
@@ -55,7 +54,6 @@ public class AddUserFragment extends Fragment {
         contentLoadingProgressBar =
                 (ContentLoadingProgressBar) rootView.findViewById(R.id.saveProgressBar);
 
-        mViewModel = new ViewModelProvider(this).get(SaveUserViewModel.class);
 
         mViewModel.getUserLiveData().observe(this.requireActivity(), isSaved -> {
             Log.d("**************", isSaved + "");
