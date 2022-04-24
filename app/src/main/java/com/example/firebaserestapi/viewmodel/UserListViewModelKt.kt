@@ -12,6 +12,7 @@ class UserListViewModelKt constructor(private val mainRepository: UserRepository
     val errorMessage = MutableLiveData<String>()
     val userKtList = MutableLiveData<List<UserKt>>()
     val loadingStatus = MutableLiveData<Boolean>()
+    var isListInitlized = false
 
     val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onError("Exception handled: ${throwable.localizedMessage}")
@@ -19,6 +20,11 @@ class UserListViewModelKt constructor(private val mainRepository: UserRepository
 
     var job: Job? = null
 
+    fun intiUserList(){
+        if(!isListInitlized){
+            getAllUsers()
+        }
+    }
 
     fun getAllUsers() {
         Log.d("*************","getAllUsers Api hit")
@@ -48,6 +54,7 @@ class UserListViewModelKt constructor(private val mainRepository: UserRepository
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful and isParsed) {
+                    isListInitlized = true;
                     userKtList.postValue(users)
                     loadingStatus.postValue(true)
                 } else {

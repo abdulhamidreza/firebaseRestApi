@@ -112,6 +112,8 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
             }
         });
 
+        mViewModel.intiUserList();
+
 
     }
 
