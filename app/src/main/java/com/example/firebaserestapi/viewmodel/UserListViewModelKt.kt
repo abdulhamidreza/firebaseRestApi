@@ -21,6 +21,7 @@ class UserListViewModelKt constructor(private val mainRepository: UserRepository
 
 
     fun getAllUsers() {
+        Log.d("*************","getAllUsers Api hit")
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             val response = mainRepository.getAllUsers()
             var users: MutableList<UserKt> = ArrayList<UserKt>()

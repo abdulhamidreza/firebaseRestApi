@@ -23,7 +23,6 @@ import com.example.firebaserestapi.repository.UserRepositoryKt;
 import com.example.firebaserestapi.viewmodel.MyViewModelFactory;
 import com.example.firebaserestapi.viewmodel.UserListViewModelKt;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +44,11 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RetrofitServiceKt retrofitService = RetrofitServiceKt.Companion.getInstance();
-        UserRepositoryKt userRepositoryKt = new UserRepositoryKt(retrofitService);
-        mViewModel = new ViewModelProvider(this, new MyViewModelFactory(userRepositoryKt)).get(UserListViewModelKt.class);
+            RetrofitServiceKt retrofitService = RetrofitServiceKt.Companion.getInstance();
+            UserRepositoryKt userRepositoryKt = new UserRepositoryKt(retrofitService);
+            mViewModel = new ViewModelProvider(this, new MyViewModelFactory(userRepositoryKt)).get(UserListViewModelKt.class);
+            Log.d("***********", "onCreate");
+            // mViewModel.getAllUsers();
     }
 
     @Nullable
@@ -72,6 +73,15 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
                 gotoAddUserFragment();
             }
         });
+
+
+        ExtendedFloatingActionButton fab2 = (ExtendedFloatingActionButton) rootView.findViewById(R.id.add_user_fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewModel.getAllUsers();
+            }
+        });
         userRecycler = rootView.findViewById(R.id.recycleView_container);
         userRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         userRecycler.setHasFixedSize(true);
@@ -86,7 +96,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
             userKtList = userListSet;
             userRecycler.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
-            Log.e("********** loadUserList", userListSet.toString());
+            Log.e("********** loadUserList " + mViewModel.hashCode(), userListSet.toString());
         });
 
         mViewModel.getErrorMessage().observe(this.requireActivity(), it -> {
@@ -102,7 +112,6 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
             }
         });
 
-        mViewModel.getAllUsers();
 
     }
 

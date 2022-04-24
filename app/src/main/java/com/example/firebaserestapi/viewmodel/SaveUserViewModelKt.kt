@@ -1,5 +1,6 @@
 package com.example.firebaserestapi.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.firebaserestapi.data.UserKt
@@ -37,6 +38,7 @@ class SaveUserViewModelKt constructor(private val mainRepository: UserRepository
 
     override fun onCleared() {
         super.onCleared()
+        Log.d("*************"," onCleared caled")
         job?.cancel()
     }
 }
