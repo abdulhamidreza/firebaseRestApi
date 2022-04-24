@@ -11,10 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.firebaserestapi.R;
-import com.example.firebaserestapi.data.User;
-import com.example.firebaserestapi.viewmodel.SaveUserViewModel;
+import com.example.firebaserestapi.data.UserKt;
+import com.example.firebaserestapi.network.RetrofitServiceKt;
+import com.example.firebaserestapi.repository.UserRepositoryKt;
+import com.example.firebaserestapi.viewmodel.MyViewModelFactory;
+import com.example.firebaserestapi.viewmodel.SaveUserViewModelKt;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -23,7 +27,7 @@ import java.util.Objects;
 public class AddUserFragment extends Fragment {
 
     private View rootView;
-    private SaveUserViewModel mViewModel;
+    private SaveUserViewModelKt mViewModel;
     private TextInputEditText userNameETxt;
     private TextInputEditText userEmailETxt;
     private TextInputEditText userPhoneETxt;
@@ -33,6 +37,14 @@ public class AddUserFragment extends Fragment {
 
     public static AddUserFragment newInstance() {
         return new AddUserFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        RetrofitServiceKt retrofitService = RetrofitServiceKt.Companion.getInstance();
+        UserRepositoryKt userRepositoryKt = new UserRepositoryKt(retrofitService);
+        mViewModel = new ViewModelProvider(this, new MyViewModelFactory(userRepositoryKt)).get(SaveUserViewModelKt.class);
     }
 
     @Nullable
@@ -54,18 +66,9 @@ public class AddUserFragment extends Fragment {
         contentLoadingProgressBar =
                 (ContentLoadingProgressBar) rootView.findViewById(R.id.saveProgressBar);
 
-
-        mViewModel.getUserLiveData().observe(this.requireActivity(), isSaved -> {
-            Log.d("**************", isSaved + "");
-            contentLoadingProgressBar.hide();
-            requireActivity().onBackPressed();
-        });
-
-
         saveUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                contentLoadingProgressBar.show();
                 saveUserDetails();
             }
         });
@@ -73,11 +76,28 @@ public class AddUserFragment extends Fragment {
     }
 
     private void saveUserDetails() {
-        User user = new User();
-        user.setName(Objects.requireNonNull(userNameETxt.getText()).toString());
-        user.setEmail(Objects.requireNonNull(userEmailETxt.getText()).toString());
-        user.setPhone(Objects.requireNonNull(userPhoneETxt.getText()).toString());
-        mViewModel.saveUserLiveData(user);
+
+        mViewModel.getErrorMessage().observe(this.requireActivity(), it -> {
+            Log.e("********** getErrorMessage", it);
+        });
+
+        mViewModel.getLoadingStatus().observe(this.requireActivity(), it -> {
+            Log.e("********** getLoading", "is Loading " + it);
+            if (it) {
+                contentLoadingProgressBar.hide();
+                requireActivity().onBackPressed();
+            } else {
+                contentLoadingProgressBar.hide();
+                saveUserBtn.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+            }
+        });
+
+        UserKt user = new UserKt(Objects.requireNonNull(userNameETxt.getText()).toString(),
+                Objects.requireNonNull(userEmailETxt.getText()).toString(),
+                Objects.requireNonNull(userPhoneETxt.getText()).toString());
+
+        contentLoadingProgressBar.show();
+        mViewModel.postUserData(user);
     }
 
 

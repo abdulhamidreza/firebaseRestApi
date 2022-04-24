@@ -1,7 +1,7 @@
 package com.example.firebaserestapi.network
 
-import com.example.firebaserestapi.data.User
 import com.example.firebaserestapi.data.UserKt
+import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,10 +12,10 @@ import retrofit2.http.POST
 interface RetrofitServiceKt {
 
     @GET("/user.json")
-    suspend fun getUserListData(): Response<List<UserKt>>
+    suspend fun getUserListData(): Response<JsonObject>
 
     @POST("/user.json")
-    suspend fun postUserListData(@Body user: User): Response<Void>
+    suspend fun postUserData(@Body user: UserKt): Response<Void>
 
     companion object {
         var retrofitServiceKt: RetrofitServiceKt? = null

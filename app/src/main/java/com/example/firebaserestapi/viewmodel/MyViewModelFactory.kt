@@ -11,6 +11,8 @@ class MyViewModelFactory constructor(private val repository: UserRepositoryKt) :
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(UserListViewModelKt::class.java)) {
             UserListViewModelKt(this.repository) as T
+        } else if (modelClass.isAssignableFrom(SaveUserViewModelKt::class.java)) {
+            SaveUserViewModelKt(this.repository) as T
         } else {
             throw IllegalArgumentException("ViewModel Not Found")
         }

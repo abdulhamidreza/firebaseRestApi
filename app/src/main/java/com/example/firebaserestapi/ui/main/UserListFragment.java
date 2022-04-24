@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebaserestapi.R;
-import com.example.firebaserestapi.data.User;
 import com.example.firebaserestapi.data.UserAdapter;
+import com.example.firebaserestapi.data.UserKt;
 import com.example.firebaserestapi.network.RetrofitServiceKt;
 import com.example.firebaserestapi.repository.UserRepositoryKt;
 import com.example.firebaserestapi.viewmodel.MyViewModelFactory;
@@ -35,8 +35,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
     private UserAdapter userAdapter;
     private View rootView;
     private ContentLoadingProgressBar contentLoadingProgressBar;
-    private List<User> users = new ArrayList<>();
-    private Gson gson = new Gson();
+    private List<UserKt> userKtList = new ArrayList<>();
 
     public static UserListFragment newInstance() {
         return new UserListFragment();
@@ -84,6 +83,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
 
         mViewModel.getUserKtList().observe(this.requireActivity(), userListSet -> {
             userAdapter = new UserAdapter(userListSet, this);
+            userKtList = userListSet;
             userRecycler.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
             Log.e("********** loadUserList", userListSet.toString());
@@ -118,13 +118,14 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserItem
 
     @Override
     public void onUserItemClicked(int position) {
-        User userSelected = users.get(position);
-        String backStateName = this.getClass().getName();
+        UserKt userSelected = userKtList.get(position);
 
         Bundle bundle = new Bundle();
         bundle.putString("user", userSelected.getName());
         bundle.putString("email", userSelected.getEmail());
         bundle.putString("phone", userSelected.getPhone());
+
+        String backStateName = this.getClass().getName();
         Fragment fragment = ShowUsersFragment.newInstance();
         fragment.setArguments(bundle);
         requireActivity().getSupportFragmentManager().beginTransaction()
