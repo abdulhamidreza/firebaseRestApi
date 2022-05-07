@@ -34,6 +34,7 @@ class UserListViewModelKt constructor(private val mainRepository: UserRepository
             var isParsed = true
             var errorMassage = ""
 
+            //Todo Use Dispatchers.Default  with Async Coroutine
             if (response.body() != null) {
                 val gson = Gson();
                 for ((key, value) in response.body()!!.entrySet()) {

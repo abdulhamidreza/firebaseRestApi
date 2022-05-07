@@ -51,8 +51,9 @@ dependencies {
     //Coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.9'
 
     //viewModel
     implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
 }
